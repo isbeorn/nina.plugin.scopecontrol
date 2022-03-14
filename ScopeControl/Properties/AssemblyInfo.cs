@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.2.2.0")]
 
 //The minimum Version of N.I.N.A. that this plugin is compatible with
-[assembly: AssemblyMetadata("MinimumApplicationVersion", "2.0.0.2020")]
+[assembly: AssemblyMetadata("MinimumApplicationVersion", "2.0.0.2050")]
 
 //Your plugin homepage - omit if not applicaple
 [assembly: AssemblyMetadata("Homepage", "https://www.patreon.com/stefanberg/")]
