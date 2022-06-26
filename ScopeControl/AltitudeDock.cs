@@ -16,6 +16,7 @@ using System.Windows;
 namespace ScopeControl {
     [Export(typeof(IDockableVM))]
     public class AltitudeDock : DockableVM, ITelescopeConsumer {
+        private INighttimeCalculator nighttimeCalculator;
         private ITelescopeMediator telescopeMediator;
 
         [ImportingConstructor]
@@ -29,7 +30,11 @@ namespace ScopeControl {
             ImageGeometry = (System.Windows.Media.GeometryGroup)dict["ScopeControl_CrosshairSVG"];
             ImageGeometry.Freeze();
 
-            Task.Run(() => NighttimeData = nighttimeCalculator.Calculate());
+            Task.Run(() => {
+                NighttimeData = nighttimeCalculator.Calculate();
+                nighttimeCalculator.OnReferenceDayChanged += NighttimeCalculator_OnReferenceDayChanged;
+            });
+            this.nighttimeCalculator = nighttimeCalculator;
             this.telescopeMediator = telescopeMediator;
             telescopeMediator.RegisterConsumer(this);
             Title = "Altitude Chart";
@@ -42,7 +47,12 @@ namespace ScopeControl {
             profileService.HorizonChanged += (object sender, EventArgs e) => {
                 Target?.SetCustomHorizon(profileService.ActiveProfile.AstrometrySettings.Horizon);
             };
-        }      
+        }
+
+        private void NighttimeCalculator_OnReferenceDayChanged(object sender, EventArgs e) {
+            NighttimeData = nighttimeCalculator.Calculate();
+            RaisePropertyChanged(nameof(NighttimeData));
+        }
 
         public void Dispose() {
             telescopeMediator.RemoveConsumer(this);
