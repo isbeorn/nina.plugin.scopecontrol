@@ -43,14 +43,15 @@ namespace ScopeControl {
             StopMoveAxisCommand = new RelayCommand(o => MoveAxis((Direction)Enum.Parse(typeof(Direction), o.ToString(), true), 0));
 
             StopCommand = new RelayCommand(o => {
-                var type = telescopeMediator.GetType();
-                var stopSlew = type.GetMethod("StopSlew");
-                stopSlew.Invoke(telescopeMediator, null);
+                telescopeMediator.StopSlew();
                 telescopeMediator.SetTrackingEnabled(false);
             });
 
             ParkCommand = new AsyncCommand<bool>(() => telescopeMediator.ParkTelescope(default, default));
             UnparkCommand = new AsyncCommand<bool>(() => telescopeMediator.UnparkTelescope(default, default));
+            StartTrackingCommand = new RelayCommand((object o) => telescopeMediator.SetTrackingEnabled(true), (object o) => !TelescopeInfo.TrackingEnabled && !TelescopeInfo.AtPark);
+            StopTrackingCommand = new RelayCommand((object o) => telescopeMediator.SetTrackingEnabled(false), (object o) => TelescopeInfo.TrackingEnabled && !TelescopeInfo.AtPark);
+            
             SlewToAltAzCommand = new AsyncCommand<bool>(o => ItemRunner(SlewScopeToAltAz));
             SlewToRaDecCommand = new AsyncCommand<bool>(o => ItemRunner(SlewScopeToRaDec));
 
@@ -76,6 +77,9 @@ namespace ScopeControl {
         public ICommand StopCommand { get; }
         public IAsyncCommand ParkCommand { get; }
         public IAsyncCommand UnparkCommand { get; }
+        public ICommand StartTrackingCommand { get; }
+        public ICommand StopTrackingCommand { get; }
+        
         public IAsyncCommand SlewToAltAzCommand { get; }
         public IAsyncCommand SlewToRaDecCommand { get; }
 
