@@ -27,7 +27,7 @@ namespace ScopeControl {
 
             var dict = new ResourceDictionary();
             dict.Source = new Uri("ScopeControl;component/DataTemplates.xaml", UriKind.RelativeOrAbsolute);
-            ImageGeometry = (System.Windows.Media.GeometryGroup)dict["ScopeControl_CrosshairSVG"];
+            ImageGeometry = (System.Windows.Media.GeometryGroup)dict["ScopeControl_AltitudeSVG"];
             ImageGeometry.Freeze();
 
             Task.Run(() => {
@@ -65,9 +65,14 @@ namespace ScopeControl {
             if(IsVisible) { 
                 TelescopeInfo = deviceInfo;
                 if(TelescopeInfo.Connected && TelescopeInfo.TrackingEnabled && NighttimeData != null) {
+                    var showMoon = Target != null ? Target.Moon.DisplayMoon : false;
                     if(Target == null || (Target?.Coordinates - deviceInfo.Coordinates)?.Distance.Degree > 0.01) { 
                         Target = new DeepSkyObject("", deviceInfo.Coordinates, "", profileService.ActiveProfile.AstrometrySettings.Horizon);
                         Target.SetDateAndPosition(NighttimeCalculator.GetReferenceDate(DateTime.Now), profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude);
+                        if(showMoon) {
+                            Target.Refresh();
+                            Target.Moon.DisplayMoon = true;
+                        }
                         RaisePropertyChanged(nameof(Target));
                     }
                 } else {

@@ -3,6 +3,10 @@
 ## Version 2.0.0.0
 - Upgrade to .net7
 
+## Version X
+- Fixed moon button toggle not being persistent when coordinates change
+- Added an azimuth chart
+
 ## Version 1.2.3.0
 - Added a start/stop tracking button
 - Rearranged the manual coordinate slew controls to switch between ra/dec and alt/az instead of showing both together
