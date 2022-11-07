@@ -19,7 +19,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace ScopeControl {
@@ -55,7 +54,7 @@ namespace ScopeControl {
                 currentTelescopeCoordinates = null;
                 BuildHorizon();
             };
-            var timer = new System.Timers.Timer(TimeSpan.FromMinutes(5));
+            var timer = new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             timer.Elapsed += UpdateMoonPosition;
             timer.Enabled = true;
 
