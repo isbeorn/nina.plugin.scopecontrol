@@ -16,7 +16,9 @@
     <converter:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
     <converter:NullToVisibilityCollapsedConverter x:Key="NullToVisibilityCollapsedConverter" />
     <converter:SetAlphaToColorConverter x:Key="SetAlphaToColorConverter" />
+    <converter:UnitConverter x:Key="UnitConverter" />
     <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+    <local:AltitudeConverter x:Key="AltitudeConverter" />
 
     <DataTemplate x:Key="ScopeControl.ScopeControlDock_Dockable">
         <Grid Margin="5" IsEnabled="{Binding TelescopeInfo.Connected}">
@@ -593,6 +595,7 @@
                         DataFieldY="Y"
                         DataFieldY2="Y"
                         ItemsSource="{Binding Horizon}"
+                        TrackerKey="AltAzTracker"
                         XAxisKey="AltitudeAxis"
                         YAxisKey="AzimuthAxis"
                         Color="{Binding Path=Color, Source={StaticResource ButtonBackgroundBrush}}" />
@@ -600,6 +603,7 @@
                         DataFieldX="X"
                         DataFieldY="Y"
                         ItemsSource="{Binding TelescopePath}"
+                        TrackerKey="AltAzTracker"
                         XAxisKey="AltitudeAxis"
                         YAxisKey="AzimuthAxis"
                         Color="{Binding Path=Color, Source={StaticResource SecondaryBrush}}" />
@@ -607,11 +611,41 @@
                         DataFieldX="X"
                         DataFieldY="Y"
                         ItemsSource="{Binding Moon}"
+                        TrackerKey="AltAzTracker"
                         Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityCollapsedConverter}}"
                         XAxisKey="AltitudeAxis"
                         YAxisKey="AzimuthAxis"
                         Color="{Binding MoonColor}" />
                 </oxy:Plot.Series>
+                <oxy:Plot.TrackerDefinitions>
+                    <oxy:TrackerDefinition TrackerKey="AltAzTracker">
+                        <oxy:TrackerDefinition.TrackerTemplate>
+                            <ControlTemplate>
+                                <oxy:TrackerControl
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    LineExtents="{Binding PlotModel.PlotArea}"
+                                    Position="{Binding Position}">
+                                    <oxy:TrackerControl.Content>
+                                        <StackPanel Margin="5,2.5,5,2.5" Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{ns:Loc LblAzimuth}" />
+                                                <TextBlock Text=": " />
+                                                <TextBlock Text="{Binding Item.Y, Converter={StaticResource UnitConverter}, ConverterParameter=°|2}" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{ns:Loc LblAltitude}" />
+                                                <TextBlock Text=": " />
+                                                <TextBlock Text="{Binding Item.X, Converter={StaticResource AltitudeConverter}}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </oxy:TrackerControl.Content>
+                                </oxy:TrackerControl>
+                            </ControlTemplate>
+                        </oxy:TrackerDefinition.TrackerTemplate>
+                    </oxy:TrackerDefinition>
+                </oxy:Plot.TrackerDefinitions>
                 <oxy:Plot.Annotations>
                     <oxy:PointAnnotation
                         Fill="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"

@@ -260,6 +260,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AltitudeConverter.cs" />
     <Compile Include="AltitudeDock.cs" />
     <Compile Include="AzimuthDock.cs" />
     <Compile Include="DataTemplates.xaml.cs">
