@@ -45,6 +45,7 @@ namespace ScopeControl {
 
             profileService.LocationChanged += (object sender, EventArgs e) => {
                 currentTelescopeCoordinates = null;
+                UpdatePole();
             };
 
             profileService.HorizonChanged += (object sender, EventArgs e) => {
@@ -52,7 +53,7 @@ namespace ScopeControl {
             };
             profileService.ProfileChanged += (object sender, EventArgs e) => {
                 currentTelescopeCoordinates = null;
-                BuildHorizon();
+                UpdatePole();
             };
             var timer = new System.Timers.Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             timer.Elapsed += UpdateMoonPosition;
@@ -61,9 +62,17 @@ namespace ScopeControl {
             BuildHorizon();
             BuildMoonData();
             UpdateMoonPosition(null, null);
+            UpdatePole();
 
             var quarter = (System.Windows.Media.GeometryGroup)System.Windows.Application.Current.Resources["FirstQuarterMoonSVG"];
             
+        }
+
+        private void UpdatePole() {
+            var northern = profileService.ActiveProfile.AstrometrySettings.Latitude > 0;
+            var alt = northern ? -profileService.ActiveProfile.AstrometrySettings.Latitude : profileService.ActiveProfile.AstrometrySettings.Latitude;
+            var az = northern ? 0 : 180;
+            PolePosition = new DataPoint(alt, az);
         }
 
         private DateTime currentReferenceDate;
@@ -225,12 +234,24 @@ namespace ScopeControl {
                 }                
             }
         }
+
         private DataPoint moonPosition;
         public DataPoint MoonPosition {
             get => moonPosition;
             set {
                 if (moonPosition.X != value.X || moonPosition.Y != value.Y) {
                     moonPosition = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private DataPoint polePosition;
+        public DataPoint PolePosition {
+            get => polePosition;
+            set {
+                if (polePosition.X != value.X || polePosition.Y != value.Y) {
+                    polePosition = value;
                     RaisePropertyChanged();
                 }
             }

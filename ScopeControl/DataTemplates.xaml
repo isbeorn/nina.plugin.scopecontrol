@@ -623,6 +623,15 @@
                         Y="{Binding TelescopePosition.Y}"
                         YAxisKey="AzimuthAxis" />
                     <oxy:PointAnnotation
+                        Fill="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        Shape="Diamond"
+                        Stroke="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        StrokeThickness="2"
+                        X="{Binding PolePosition.X}"
+                        XAxisKey="AltitudeAxis"
+                        Y="{Binding PolePosition.Y}"
+                        YAxisKey="AzimuthAxis" />
+                    <oxy:PointAnnotation
                         Fill="{Binding MoonColor}"
                         Shape="Circle"
                         Stroke="{Binding MoonColor}"
