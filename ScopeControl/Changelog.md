@@ -3,7 +3,13 @@
 ## Version 2.0.0.0
 - Upgrade to .net7
 
-## Version X
+## Version 1.4.1.0
+- Azimuth Chart improvements
+  - Improved chart plotting for telescope path
+  - Added pole indicator
+  - Improved display of values when left clicking on lines to show the Altitude and Azimuth values properly
+
+## Version 1.4.0.0
 - Fixed moon button toggle not being persistent when coordinates change
 - Added an azimuth chart
 

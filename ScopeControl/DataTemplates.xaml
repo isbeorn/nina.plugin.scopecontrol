@@ -751,6 +751,206 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="ScopeControl.AzimuthDock_Dockable">
+        <Grid Margin="5">
+            <oxy:Plot
+                Background="{StaticResource BackgroundBrush}"
+                PlotAreaBackground="{StaticResource BackgroundBrush}"
+                PlotAreaBorderColor="{Binding Path=Color, Source={StaticResource BorderBrush}}">
+                <!--<oxy:Plot.PlotAreaBackground>
+                    <SolidColorBrush Color="#66000000" />
+                </oxy:Plot.PlotAreaBackground>-->
+                <oxy:Plot.Axes>
+                    <!--  Currently the center is 0 - so the axis values need to be inverted  -->
+                    <oxy:MagnitudeAxis
+                        Key="AltitudeAxis"
+                        AxislineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        IsPanEnabled="False"
+                        IsZoomEnabled="False"
+                        MajorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}"
+                        MajorStep="10"
+                        Maximum="00"
+                        Minimum="-90"
+                        MinorGridlineColor="Transparent"
+                        TextColor="Transparent" />
+                    <oxy:AngleAxis
+                        Key="AzimuthAxis"
+                        AxislineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        EndAngle="90"
+                        IsPanEnabled="False"
+                        IsZoomEnabled="False"
+                        MajorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}"
+                        MajorStep="45"
+                        Maximum="360"
+                        Minimum="0"
+                        MinorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=20}"
+                        MinorStep="22.5"
+                        StartAngle="450"
+                        TextColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        TicklineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}" />
+                </oxy:Plot.Axes>
+                <oxy:Plot.Series>
+                    <oxy:AreaSeries
+                        DataFieldX="X"
+                        DataFieldX2="X2"
+                        DataFieldY="Y"
+                        DataFieldY2="Y"
+                        ItemsSource="{Binding Horizon}"
+                        TrackerKey="AltAzTracker"
+                        XAxisKey="AltitudeAxis"
+                        YAxisKey="AzimuthAxis"
+                        Color="{Binding Path=Color, Source={StaticResource ButtonBackgroundBrush}}" />
+                    <oxy:LineSeries
+                        DataFieldX="X"
+                        DataFieldY="Y"
+                        ItemsSource="{Binding TelescopePath}"
+                        TrackerKey="AltAzTracker"
+                        XAxisKey="AltitudeAxis"
+                        YAxisKey="AzimuthAxis"
+                        Color="{Binding Path=Color, Source={StaticResource SecondaryBrush}}" />
+                    <oxy:LineSeries
+                        DataFieldX="X"
+                        DataFieldY="Y"
+                        ItemsSource="{Binding Moon}"
+                        TrackerKey="AltAzTracker"
+                        Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityCollapsedConverter}}"
+                        XAxisKey="AltitudeAxis"
+                        YAxisKey="AzimuthAxis"
+                        Color="{Binding MoonColor}" />
+                </oxy:Plot.Series>
+                <oxy:Plot.TrackerDefinitions>
+                    <oxys:TrackerDefinition TrackerKey="AltAzTracker">
+                        <oxys:TrackerDefinition.TrackerTemplate>
+                            <ControlTemplate>
+                                <oxys:TrackerControl
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    LineExtents="{Binding PlotModel.PlotArea}"
+                                    Position="{Binding Position}">
+                                    <oxys:TrackerControl.Content>
+                                        <StackPanel Margin="5,2.5,5,2.5" Orientation="Vertical">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{ns:Loc LblAzimuth}" />
+                                                <TextBlock Text=": " />
+                                                <TextBlock Text="{Binding Item.Y, Converter={StaticResource UnitConverter}, ConverterParameter=°|2}" />
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{ns:Loc LblAltitude}" />
+                                                <TextBlock Text=": " />
+                                                <TextBlock Text="{Binding Item.X, Converter={StaticResource AltitudeConverter}}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </oxys:TrackerControl.Content>
+                                </oxys:TrackerControl>
+                            </ControlTemplate>
+                        </oxys:TrackerDefinition.TrackerTemplate>
+                    </oxys:TrackerDefinition>
+                </oxy:Plot.TrackerDefinitions>
+                <oxy:Plot.Annotations>
+                    <oxy:PointAnnotation
+                        Fill="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        Shape="Cross"
+                        Stroke="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        StrokeThickness="2"
+                        X="{Binding TelescopePosition.X}"
+                        XAxisKey="AltitudeAxis"
+                        Y="{Binding TelescopePosition.Y}"
+                        YAxisKey="AzimuthAxis" />
+                    <oxy:PointAnnotation
+                        Fill="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        Shape="Diamond"
+                        Stroke="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        StrokeThickness="2"
+                        X="{Binding PolePosition.X}"
+                        XAxisKey="AltitudeAxis"
+                        Y="{Binding PolePosition.Y}"
+                        YAxisKey="AzimuthAxis" />
+                    <oxy:PointAnnotation
+                        Fill="{Binding MoonColor}"
+                        Shape="Circle"
+                        Stroke="{Binding MoonColor}"
+                        StrokeThickness="2"
+                        X="{Binding MoonPosition.X}"
+                        XAxisKey="AltitudeAxis"
+                        Y="{Binding MoonPosition.Y}"
+                        YAxisKey="AzimuthAxis" />
+                </oxy:Plot.Annotations>
+            </oxy:Plot>
+            <Grid
+                Margin="5"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ToggleButton
+                    Width="24"
+                    Height="24"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    IsChecked="{Binding ShowMoon}">
+                    <ToggleButton.ToolTip>
+                        <ToolTip ToolTipService.ShowOnDisabled="True">
+                            <TextBlock Text="{ns:Loc LblDisplayMoonChart}" />
+                        </ToolTip>
+                    </ToggleButton.ToolTip>
+                    <ToggleButton.Style>
+                        <Style BasedOn="{StaticResource TB}" TargetType="ToggleButton">
+                            <Style.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <Grid>
+                                                <Path
+                                                    Margin="5"
+                                                    Data="{StaticResource NewMoonSVG}"
+                                                    Fill="{StaticResource ButtonForegroundBrush}"
+                                                    Stretch="Uniform" />
+                                                <Path
+                                                    Margin="5"
+                                                    Data="{Binding MoonPhase, Converter={StaticResource MoonPhaseToGeometryConverter}}"
+                                                    Fill="Black"
+                                                    Stretch="Uniform" />
+                                            </Grid>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <Grid>
+                                                <Path
+                                                    Margin="5"
+                                                    Data="{StaticResource NewMoonSVG}"
+                                                    Fill="{StaticResource ButtonForegroundDisabledBrush}"
+                                                    Stretch="Uniform" />
+                                                <Path
+                                                    Margin="5"
+                                                    Data="{Binding MoonPhase, Converter={StaticResource MoonPhaseToGeometryConverter}}"
+                                                    Fill="Black"
+                                                    Stretch="Uniform" />
+                                            </Grid>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ToggleButton.Style>
+                </ToggleButton>
+                <TextBlock
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Foreground="{StaticResource ButtonForegroundBrush}"
+                    Text="{Binding MoonSeparation}"
+                    ToolTip="{ns:Loc LblMoonSeparation}"
+                    Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" />
+            </Grid>
+        </Grid>
+    </DataTemplate>
+
     <GeometryGroup x:Key="ScopeControlSVG">
         <PathGeometry Figures="M 253.552,-0.1026L 482.375,-0.1026L 482.375,141.319L 253.552,141.319L 253.552,-0.1026 Z " />
         <PathGeometry Figures="M 510.131,165.564L 738.953,165.564L 738.953,306.985L 510.131,306.985L 510.131,165.564 Z " />
