@@ -93,12 +93,12 @@ namespace ScopeControl {
             var h = new List<HorizonPoint>();
             CustomHorizon customHorizon = profileService.ActiveProfile.AstrometrySettings.Horizon;
             if (customHorizon != null) {
-                for (int azimuth = 0; azimuth < 360; azimuth++) {
+                for (int azimuth = 0; azimuth <= 360; azimuth++) {
                     var horizonAltitude = customHorizon.GetAltitude(azimuth);
                     h.Add(new HorizonPoint(-horizonAltitude, azimuth));
                 }
             } else {
-                for (int azimuth = 0; azimuth < 360; azimuth++) {
+                for (int azimuth = 0; azimuth <= 360; azimuth++) {
                     h.Add(new HorizonPoint(0, azimuth));
                 }
             }
@@ -253,22 +253,15 @@ namespace ScopeControl {
                                 var latitude = profileService.ActiveProfile.AstrometrySettings.Latitude;
                                 var longitude = profileService.ActiveProfile.AstrometrySettings.Longitude;
 
-                                var siderealTime = AstroUtil.GetLocalSiderealTimeNow(longitude);
 
-                                bool circumpolar = true;
-                                for (double angle = 0; angle < 24; angle += 0.1) {
+                                for (int angle = 180; angle <= 540; angle += 3) {
 
-                                    var ha = AstroUtil.GetHourAngle(siderealTime, angle);
+                                    var ha = AstroUtil.DegreesToHours(AstroUtil.EuclidianModulus(angle, 360));
                                     var alt = AstroUtil.GetAltitude(Angle.ByHours(ha), Angle.ByDegree(latitude), Angle.ByDegree(currentTelescopeCoordinates.Dec));
                                     var az = AstroUtil.GetAzimuth(Angle.ByHours(ha), alt, Angle.ByDegree(latitude), Angle.ByDegree(currentTelescopeCoordinates.Dec));
                                     if (alt.Degree > 0) {
                                         path.Add(new DataPoint(-alt.Degree, az.Degree));
-                                    } else {
-                                        circumpolar = false;
                                     }
-                                }
-                                if (!circumpolar) {
-                                    path = path.OrderBy(x => x.Y).ToList();
                                 }
 
                                 TelescopePath = path;
