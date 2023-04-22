@@ -498,22 +498,45 @@
                         Tracking</TextBlock>
                 </Button>
             </Grid>
-            <Button
+            <UniformGrid
                 Grid.Row="1"
                 Margin="5"
-                HorizontalAlignment="Stretch"
-                Command="{Binding ParkCommand}"
-                Visibility="{Binding TelescopeInfo.AtPark, Converter={StaticResource InverseBoolToVisibilityConverter}}">
-                <TextBlock Foreground="{StaticResource ButtonForegroundBrush}" Text="{ns:Loc LblPark}" />
-            </Button>
-            <Button
-                Grid.Row="1"
-                Margin="5"
-                HorizontalAlignment="Stretch"
-                Command="{Binding UnparkCommand}"
-                Visibility="{Binding TelescopeInfo.AtPark, Converter={StaticResource VisibilityConverter}}">
-                <TextBlock Foreground="{StaticResource ButtonForegroundBrush}" Text="{ns:Loc LblUnpark}" />
-            </Button>
+                Columns="2">
+                <Button
+                    Margin="0,0,2.5,0"
+                    HorizontalAlignment="Stretch"
+                    Command="{Binding HomeCommand}"
+                    Visibility="{Binding TelescopeInfo.CanFindHome, Converter={StaticResource VisibilityConverter}}">
+                    <Button.IsEnabled>
+                        <MultiBinding Converter="{StaticResource InverseMultiBooleanORConverter}">
+                            <Binding Path="TelescopeInfo.AtHome" />
+                            <Binding Path="TelescopeInfo.AtPark" />
+                            <Binding Path="IsParkingOrHoming" />
+                        </MultiBinding>
+                    </Button.IsEnabled>
+                    <TextBlock Foreground="{StaticResource ButtonForegroundBrush}" Text="{ns:Loc LblHome}" />
+                </Button>
+                <Grid Margin="2.5,0,0,0">
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding ParkCommand}"
+                        Visibility="{Binding TelescopeInfo.AtPark, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource InverseMultiBooleanORConverter}">
+                                <Binding Path="IsParkingOrHoming" />
+                                <Binding Path="TelescopeInfo.AtPark" />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <TextBlock Foreground="{StaticResource ButtonForegroundBrush}" Text="{ns:Loc LblPark}" />
+                    </Button>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding UnparkCommand}"
+                        Visibility="{Binding TelescopeInfo.AtPark, Converter={StaticResource VisibilityConverter}}">
+                        <TextBlock Foreground="{StaticResource ButtonForegroundBrush}" Text="{ns:Loc LblUnpark}" />
+                    </Button>
+                </Grid>
+            </UniformGrid>
         </Grid>
     </DataTemplate>
 

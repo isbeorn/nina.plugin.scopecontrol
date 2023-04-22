@@ -1,4 +1,5 @@
 ﻿using NINA.Astrometry;
+using NINA.Core.Model;
 using NINA.Core.Utility;
 using NINA.Core.Utility.Notification;
 using NINA.Equipment.Equipment.MyTelescope;
@@ -8,6 +9,8 @@ using NINA.Profile.Interfaces;
 using NINA.Sequencer.SequenceItem;
 using NINA.Sequencer.SequenceItem.Telescope;
 using NINA.Sequencer.Validations;
+using NINA.WPF.Base.Interfaces.Mediator;
+using NINA.WPF.Base.Mediator;
 using NINA.WPF.Base.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -22,9 +25,10 @@ namespace ScopeControl {
     [Export(typeof(IDockableVM))]
     public class ScopeControlDock : DockableVM, ITelescopeConsumer {
         private ITelescopeMediator telescopeMediator;
+        private IProgress<ApplicationStatus> progress;
 
         [ImportingConstructor]
-        public ScopeControlDock(IProfileService profileService, ITelescopeMediator telescopeMediator, IGuiderMediator guiderMediator) : base(profileService) {
+        public ScopeControlDock(IProfileService profileService, ITelescopeMediator telescopeMediator, IGuiderMediator guiderMediator, IApplicationStatusMediator applicationStatusMediator) : base(profileService) {
             this.telescopeMediator = telescopeMediator;
             telescopeMediator.RegisterConsumer(this);
 
@@ -47,8 +51,13 @@ namespace ScopeControl {
                 telescopeMediator.SetTrackingEnabled(false);
             });
 
-            ParkCommand = new AsyncCommand<bool>(() => telescopeMediator.ParkTelescope(default, default));
-            UnparkCommand = new AsyncCommand<bool>(() => telescopeMediator.UnparkTelescope(default, default));
+            progress = new Progress<ApplicationStatus>(x => {
+                x.Source = this.Title;
+                applicationStatusMediator.StatusUpdate(x);
+            });
+            HomeCommand = new AsyncCommand<bool>(() => telescopeMediator.FindHome(progress, default));
+            ParkCommand = new AsyncCommand<bool>(() => telescopeMediator.ParkTelescope(progress, default));
+            UnparkCommand = new AsyncCommand<bool>(() => telescopeMediator.UnparkTelescope(progress, default));
             StartTrackingCommand = new RelayCommand((object o) => telescopeMediator.SetTrackingEnabled(true), (object o) => !TelescopeInfo.TrackingEnabled && !TelescopeInfo.AtPark);
             StopTrackingCommand = new RelayCommand((object o) => telescopeMediator.SetTrackingEnabled(false), (object o) => TelescopeInfo.TrackingEnabled && !TelescopeInfo.AtPark);
             
@@ -75,6 +84,7 @@ namespace ScopeControl {
         public ICommand MoveAxisCommand { get; }
         public ICommand StopMoveAxisCommand { get; }
         public ICommand StopCommand { get; }
+        public IAsyncCommand HomeCommand { get; }
         public IAsyncCommand ParkCommand { get; }
         public IAsyncCommand UnparkCommand { get; }
         public ICommand StartTrackingCommand { get; }
