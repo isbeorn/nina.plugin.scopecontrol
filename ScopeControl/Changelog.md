@@ -3,6 +3,9 @@
 ## Version 2.0.0.0
 - Upgrade to .net7
 
+## Version 1.4.1.1
+- Added home Button to control panel
+
 ## Version 1.4.1.0
 - Azimuth Chart improvements
   - Improved chart plotting for telescope path

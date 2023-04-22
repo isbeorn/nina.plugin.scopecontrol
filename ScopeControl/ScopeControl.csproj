@@ -18,7 +18,7 @@
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.346202">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="NINA.Plugin" Version="3.0.0.1001-nightly" />
+    <PackageReference Include="NINA.Plugin" Version="3.0.0.1015-nightly" />
   </ItemGroup>
   <Target Name="PostBuildMacros">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
