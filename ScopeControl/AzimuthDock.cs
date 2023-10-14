@@ -116,10 +116,9 @@ namespace ScopeControl {
 
         private void BuildMoonData() {
             var m = new List<DataPoint>();
-            var startDate = NighttimeCalculator.GetReferenceDate(DateTime.Now);
+            var startDate = DateTime.Now;
             currentReferenceDate = startDate;
             var date = startDate;
-            bool circumpolar = true;
             for (double timeIncr = 0; timeIncr < 24; timeIncr += 0.1) {
                 var jd = AstroUtil.GetJulianDate(date);
                 var tuple = AstroUtil.GetMoonAndSunPosition(date, jd);
@@ -132,13 +131,9 @@ namespace ScopeControl {
                 if (alt.Degree > 0) {
                     m.Add(new DataPoint(-alt.Degree, az.Degree));
                 } else {
-                    circumpolar = false;
+                    m.Add(DataPoint.Undefined);
                 }
-
                 date = startDate + TimeSpan.FromHours(timeIncr);
-            }
-            if (!circumpolar) {
-                m = m.OrderBy(x => x.Y).ToList();
             }
             Moon = m;            
             MoonPhase = AstroUtil.GetMoonPhase(currentReferenceDate);
@@ -274,14 +269,18 @@ namespace ScopeControl {
                                 var latitude = profileService.ActiveProfile.AstrometrySettings.Latitude;
                                 var longitude = profileService.ActiveProfile.AstrometrySettings.Longitude;
 
+                                var siderealTime = AstroUtil.GetLocalSiderealTimeNow(longitude);
+                                var start = currentTelescopeCoordinates.RA;
 
-                                for (int angle = 180; angle <= 540; angle += 3) {
+                                for (double angle = 0; angle < 24; angle += 0.1) {
 
-                                    var ha = AstroUtil.DegreesToHours(AstroUtil.EuclidianModulus(angle, 360));
+                                    var ha = AstroUtil.GetHourAngle(siderealTime, start - angle);
                                     var alt = AstroUtil.GetAltitude(Angle.ByHours(ha), Angle.ByDegree(latitude), Angle.ByDegree(currentTelescopeCoordinates.Dec));
                                     var az = AstroUtil.GetAzimuth(Angle.ByHours(ha), alt, Angle.ByDegree(latitude), Angle.ByDegree(currentTelescopeCoordinates.Dec));
                                     if (alt.Degree > 0) {
-                                        path.Add(new DataPoint(-alt.Degree, az.Degree));
+                                      path.Add(new DataPoint(-alt.Degree, az.Degree));
+                                    } else {
+                                        path.Add(DataPoint.Undefined);
                                     }
                                 }
 
