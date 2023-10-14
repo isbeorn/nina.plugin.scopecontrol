@@ -35,7 +35,7 @@ pipelines:
               - dotnet build -c Release
               
               ## Copy relevant files to packaging folder
-              - cp bin/Release/net7.0-windows/${PLUGIN_DLL_NAME}.dll ${BITBUCKET_CLONE_DIR}/packages/${PLUGIN_DLL_NAME}.dll
+              - cp ScopeControl/bin/Release/net7.0-windows/${PLUGIN_DLL_NAME}.dll ${BITBUCKET_CLONE_DIR}/packages/${PLUGIN_DLL_NAME}.dll
 
             artifacts:
               - packages/**
