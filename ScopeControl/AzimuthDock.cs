@@ -1,4 +1,5 @@
-﻿using NINA.Astrometry;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using NINA.Astrometry;
 using NINA.Astrometry.Interfaces;
 using NINA.Core.Model;
 using NINA.Core.Utility;
@@ -25,8 +26,9 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace ScopeControl {
 
     [Export(typeof(IDockableVM))]
-    public class AzimuthDock : DockableVM, ITelescopeConsumer {
+    public partial class AzimuthDock : DockableVM, ITelescopeConsumer {
         private ITelescopeMediator telescopeMediator;
+        private Coordinates currentTelescopeCoordinates;
 
         [ImportingConstructor]
         public AzimuthDock(
@@ -66,7 +68,88 @@ namespace ScopeControl {
             UpdatePole();
 
             var quarter = (System.Windows.Media.GeometryGroup)System.Windows.Application.Current.Resources["FirstQuarterMoonSVG"];
-            
+            StartAngle = 450;
+            EndAngle = 90;
+
+            ScopeControlMediator.Instance.ScopeControlPlugin.PropertyChanged += ScopeControlPlugin_PropertyChanged;
+            AzimuthDisplay = ScopeControlMediator.Instance.ScopeControlPlugin.AzimuthDisplay;
+        }
+
+        private void ScopeControlPlugin_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if(e.PropertyName == nameof(ScopeControlPlugin.AzimuthDisplay)) {
+                AzimuthDisplay = ScopeControlMediator.Instance.ScopeControlPlugin.AzimuthDisplay;
+            }
+        }
+
+        [ObservableProperty]
+        public AzimuthDisplay azimuthDisplay;
+
+        partial void OnAzimuthDisplayChanging(AzimuthDisplay value) {
+            switch (value) {
+                case AzimuthDisplay.NorthTopEastRight:
+                    StartAngle = 450;
+                    EndAngle = 90;
+                    break;
+                case AzimuthDisplay.NorthTopEastLeft:
+                    StartAngle = 90;
+                    EndAngle = 450;
+                    break;
+                case AzimuthDisplay.SouthTopEastLeft:
+                    StartAngle = 630;
+                    EndAngle = 270;
+                    break;
+                case AzimuthDisplay.SouthTopEastRight:
+                    StartAngle = 270;
+                    EndAngle = 630;
+                    break;
+            }
+        }
+
+        [ObservableProperty]
+        public int startAngle;
+
+        [ObservableProperty]
+        public int endAngle;
+
+        [ObservableProperty]
+        private AstroUtil.MoonPhase moonPhase;
+
+        [ObservableProperty]
+        private string moonSeparation;
+
+        [ObservableProperty]
+        private Color moonColor;
+
+        [ObservableProperty]
+        private List<DataPoint> moon;
+
+        [ObservableProperty]
+        private List<HorizonPoint> horizon;
+
+        [ObservableProperty]
+        private List<DataPoint> telescopePath;
+
+        [ObservableProperty]
+        private DataPoint telescopePosition;
+
+        [ObservableProperty]
+        private DataPoint moonPosition;
+
+        [ObservableProperty]
+        private DataPoint polePosition;
+
+        [ObservableProperty]
+        private bool showMoon;
+
+        partial void OnShowMoonChanging(bool value) {
+            if (value) {
+                var info = new MoonInfo(null);
+                var color = info.Color;
+                color.A = 100;
+                MoonColor = color;
+            } else {
+                MoonColor = Colors.Transparent;
+            }
         }
 
         private void UpdatePole() {
@@ -137,120 +220,6 @@ namespace ScopeControl {
             }
             Moon = m;            
             MoonPhase = AstroUtil.GetMoonPhase(currentReferenceDate);
-        }
-
-        private AstroUtil.MoonPhase moonPhase;
-        public AstroUtil.MoonPhase MoonPhase {
-            get => moonPhase;
-            set {
-                moonPhase = value;
-                RaisePropertyChanged();
-            }
-        }
-        private bool showMoon;
-        public bool ShowMoon { 
-            get => showMoon; 
-            set { 
-                showMoon = value;
-                if(value) {
-                    var info = new MoonInfo(null);
-                    var color = info.Color;
-                    color.A = 100;
-                    MoonColor = color;
-                } else {
-                    MoonColor = Colors.Transparent;
-                }
-                
-                RaisePropertyChanged(); 
-            } 
-        }
-
-        private string moonSeparation;
-        public string MoonSeparation {
-            get => moonSeparation;
-            set {
-                moonSeparation = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private Color moonColor;
-        public Color MoonColor {
-            get => moonColor;
-            set {
-                moonColor = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private List<DataPoint> moon;
-
-        public List<DataPoint> Moon {
-            get {
-                return moon;
-            }
-            private set {
-                moon = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private List<HorizonPoint> horizon;
-
-        public List<HorizonPoint> Horizon {
-            get {
-                return horizon;
-            }
-            private set {
-                horizon = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private List<DataPoint> telescopePath;
-
-        public List<DataPoint> TelescopePath {
-            get {
-                return telescopePath;
-            }
-            private set {
-                telescopePath = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private Coordinates currentTelescopeCoordinates;
-        private DataPoint telescopePosition;
-        public DataPoint TelescopePosition {
-            get => telescopePosition;
-            set {
-                if(telescopePosition.X != value.X || telescopePosition.Y != value.Y) {
-                    telescopePosition = value;
-                    RaisePropertyChanged();
-                }                
-            }
-        }
-
-        private DataPoint moonPosition;
-        public DataPoint MoonPosition {
-            get => moonPosition;
-            set {
-                if (moonPosition.X != value.X || moonPosition.Y != value.Y) {
-                    moonPosition = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private DataPoint polePosition;
-        public DataPoint PolePosition {
-            get => polePosition;
-            set {
-                if (polePosition.X != value.X || polePosition.Y != value.Y) {
-                    polePosition = value;
-                    RaisePropertyChanged();
-                }
-            }
         }
 
         public void Dispose() {

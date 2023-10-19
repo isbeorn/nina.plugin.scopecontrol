@@ -599,7 +599,7 @@
                     <oxy:AngleAxis
                         Key="AzimuthAxis"
                         AxislineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
-                        EndAngle="90"
+                        EndAngle="{Binding EndAngle}"
                         IsPanEnabled="False"
                         IsZoomEnabled="False"
                         MajorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}"
@@ -608,7 +608,7 @@
                         Minimum="0"
                         MinorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=20}"
                         MinorStep="22.5"
-                        StartAngle="450"
+                        StartAngle="{Binding StartAngle}"
                         TextColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
                         TicklineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}" />
                 </oxy:Plot.Axes>
@@ -772,6 +772,18 @@
                     Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" />
             </Grid>
         </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="Scope Control_Options">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Text="Azimuth Chart Layout" />
+            <ComboBox
+                Margin="5,0,0,0"
+                ItemsSource="{util:EnumBindingSource {x:Type local:AzimuthDisplay}}"
+                SelectedItem="{Binding AzimuthDisplay}" />
+        </StackPanel>
+
     </DataTemplate>
 
     <GeometryGroup x:Key="ScopeControlSVG">
