@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## Version 2.0.1.1
+- Improve axis rate mapping when lower and upper bounds are equal
+
 ## Version 2.0.1.0
 - Added options to adjust the azimuth chart layout. Depending on what you are used to in charts you can now flip east and north facing sides
 - 

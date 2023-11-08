@@ -145,10 +145,16 @@ namespace ScopeControl {
                 if(!wasConnected) {
                     var availableRates = new List<double>();
                     foreach(var rate in TelescopeInfo.PrimaryAxisRates) {
-                        for(int i = (int)Math.Floor(rate.Item1); i < Math.Ceiling(rate.Item2); i++) {
-                            if(i > 0) {
-                                availableRates.Add(i);
-                            }                            
+                        var lower = (int)Math.Floor(rate.Item1);
+                        var upper = (int)Math.Ceiling(rate.Item2);
+                        if (lower == upper) { 
+                            availableRates.Add(lower);
+                        } else {
+                            for (int i = lower; i < upper; i++) {
+                                if (i > 0) {
+                                    availableRates.Add(i);
+                                }
+                            }
                         }
                     }
                     AxisRates = availableRates;
