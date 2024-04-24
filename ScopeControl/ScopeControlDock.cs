@@ -152,7 +152,7 @@ namespace ScopeControl {
                             availableRates.Add(rate.Item1);
                         } else {
                             for (int i = lower; i <= upper; i++) {
-                                if (i > 0) {
+                                if (!availableRates.Contains(i)) {
                                     availableRates.Add(i);
                                 }
                             }
