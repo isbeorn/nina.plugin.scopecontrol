@@ -1,5 +1,17 @@
 ﻿# Changelog
 
+## Version 2.0.1.1
+- Improve axis rate mapping when lower and upper bounds are equal
+
+## Version 2.0.1.0
+- Added options to adjust the azimuth chart layout. Depending on what you are used to in charts you can now flip east and north facing sides
+- 
+## Version 2.0.0.5
+- Improved moon orbit plotting in azimuth chart by starting from current time and plotting only future altitudes of the moon in a non-closed loop to not show a dent in the line
+
+## Version 2.0.0.0
+- Upgrade to .net7
+
 ## Version 1.4.1.1
 - Added home Button to control panel
 

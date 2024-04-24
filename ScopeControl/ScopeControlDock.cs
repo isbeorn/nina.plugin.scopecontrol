@@ -12,6 +12,7 @@ using NINA.Sequencer.Validations;
 using NINA.WPF.Base.Interfaces.Mediator;
 using NINA.WPF.Base.Mediator;
 using NINA.WPF.Base.ViewModel;
+using OxyPlot;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -145,16 +146,22 @@ namespace ScopeControl {
                 if(!wasConnected) {
                     var availableRates = new List<double>();
                     foreach(var rate in TelescopeInfo.PrimaryAxisRates) {
-                        for(int i = (int)Math.Floor(rate.Item1); i < Math.Ceiling(rate.Item2); i++) {
-                            if(i > 0) {
-                                availableRates.Add(i);
-                            }                            
+                        var lower = (int)Math.Floor(rate.Item1);
+                        var upper = (int)Math.Ceiling(rate.Item2);
+                        if (rate.Item1 == rate.Item2) { 
+                            availableRates.Add(rate.Item1);
+                        } else {
+                            for (int i = lower; i <= upper; i++) {
+                                if (i > 0) {
+                                    availableRates.Add(i);
+                                }
+                            }
                         }
                     }
                     AxisRates = availableRates;
                     RaisePropertyChanged(nameof(AxisRates));
-                    if(AxisRates.Count > 0) { 
-                        AxisRate = AxisRates.First();
+                    if(AxisRates.Count > 0) {
+                        AxisRate = AxisRates.MaxOrDefault(AxisRates.First());
                     }
                 }
                 wasConnected = true;

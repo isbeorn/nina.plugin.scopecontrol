@@ -7,7 +7,8 @@
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:ScopeControl"
     xmlns:ns="clr-namespace:NINA.Core.Locale;assembly=NINA.Core"
-    xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf"
+    xmlns:oxy="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Contrib.Wpf"
+    xmlns:oxys="clr-namespace:OxyPlot.Wpf;assembly=OxyPlot.Wpf.Shared"
     xmlns:rules="clr-namespace:NINA.Core.Utility.ValidationRules;assembly=NINA.Core"
     xmlns:util="clr-namespace:NINA.Core.Utility;assembly=NINA.Core">
     <converter:InverseBooleanToVisibilityCollapsedConverter x:Key="InverseBooleanToVisibilityCollapsedConverter" />
@@ -598,7 +599,7 @@
                     <oxy:AngleAxis
                         Key="AzimuthAxis"
                         AxislineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
-                        EndAngle="90"
+                        EndAngle="{Binding EndAngle}"
                         IsPanEnabled="False"
                         IsZoomEnabled="False"
                         MajorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}"
@@ -607,7 +608,7 @@
                         Minimum="0"
                         MinorGridlineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=20}"
                         MinorStep="22.5"
-                        StartAngle="450"
+                        StartAngle="{Binding StartAngle}"
                         TextColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
                         TicklineColor="{Binding Path=Color, Source={StaticResource PrimaryBrush}, Converter={StaticResource SetAlphaToColorConverter}, ConverterParameter=60}" />
                 </oxy:Plot.Axes>
@@ -641,15 +642,15 @@
                         Color="{Binding MoonColor}" />
                 </oxy:Plot.Series>
                 <oxy:Plot.TrackerDefinitions>
-                    <oxy:TrackerDefinition TrackerKey="AltAzTracker">
-                        <oxy:TrackerDefinition.TrackerTemplate>
+                    <oxys:TrackerDefinition TrackerKey="AltAzTracker">
+                        <oxys:TrackerDefinition.TrackerTemplate>
                             <ControlTemplate>
-                                <oxy:TrackerControl
+                                <oxys:TrackerControl
                                     BorderBrush="{StaticResource BorderBrush}"
                                     BorderThickness="1"
                                     LineExtents="{Binding PlotModel.PlotArea}"
                                     Position="{Binding Position}">
-                                    <oxy:TrackerControl.Content>
+                                    <oxys:TrackerControl.Content>
                                         <StackPanel Margin="5,2.5,5,2.5" Orientation="Vertical">
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock Text="{ns:Loc LblAzimuth}" />
@@ -663,11 +664,11 @@
                                                 <TextBlock Text="{Binding Item.X, Converter={StaticResource AltitudeConverter}}" />
                                             </StackPanel>
                                         </StackPanel>
-                                    </oxy:TrackerControl.Content>
-                                </oxy:TrackerControl>
+                                    </oxys:TrackerControl.Content>
+                                </oxys:TrackerControl>
                             </ControlTemplate>
-                        </oxy:TrackerDefinition.TrackerTemplate>
-                    </oxy:TrackerDefinition>
+                        </oxys:TrackerDefinition.TrackerTemplate>
+                    </oxys:TrackerDefinition>
                 </oxy:Plot.TrackerDefinitions>
                 <oxy:Plot.Annotations>
                     <oxy:PointAnnotation
@@ -771,6 +772,18 @@
                     Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" />
             </Grid>
         </Grid>
+    </DataTemplate>
+
+
+    <DataTemplate x:Key="Scope Control_Options">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center" Text="Azimuth Chart Layout" />
+            <ComboBox
+                Margin="5,0,0,0"
+                ItemsSource="{util:EnumBindingSource {x:Type local:AzimuthDisplay}}"
+                SelectedItem="{Binding AzimuthDisplay}" />
+        </StackPanel>
+
     </DataTemplate>
 
     <GeometryGroup x:Key="ScopeControlSVG">
