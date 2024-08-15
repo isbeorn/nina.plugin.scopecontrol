@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## Version 2.0.2.0
+- Added custom point and custom path on azimuth chart for other sources to send the details to the azimuth chart via the IMessageBroker
+
 ## Version 2.0.1.1
 - Improve axis rate mapping when lower and upper bounds are equal
 

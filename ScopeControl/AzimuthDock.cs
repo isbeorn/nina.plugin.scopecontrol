@@ -7,6 +7,7 @@ using NINA.Equipment.Equipment.MyTelescope;
 using NINA.Equipment.Interfaces;
 using NINA.Equipment.Interfaces.Mediator;
 using NINA.Equipment.Interfaces.ViewModel;
+using NINA.Plugin.Interfaces;
 using NINA.Profile.Interfaces;
 using NINA.WPF.Base.ViewModel;
 using OxyPlot;
@@ -26,14 +27,15 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace ScopeControl {
 
     [Export(typeof(IDockableVM))]
-    public partial class AzimuthDock : DockableVM, ITelescopeConsumer {
+    public partial class AzimuthDock : DockableVM, ITelescopeConsumer, ISubscriber {
         private ITelescopeMediator telescopeMediator;
         private Coordinates currentTelescopeCoordinates;
 
         [ImportingConstructor]
         public AzimuthDock(
             IProfileService profileService,
-            ITelescopeMediator telescopeMediator) : base(profileService) {
+            ITelescopeMediator telescopeMediator, 
+            IMessageBroker messageBroker) : base(profileService) {
             var dict = new ResourceDictionary();
             dict.Source = new Uri("ScopeControl;component/DataTemplates.xaml", UriKind.RelativeOrAbsolute);
             ImageGeometry = (System.Windows.Media.GeometryGroup)dict["ScopeControl_AzimuthSVG"];
@@ -73,6 +75,12 @@ namespace ScopeControl {
 
             ScopeControlMediator.Instance.ScopeControlPlugin.PropertyChanged += ScopeControlPlugin_PropertyChanged;
             AzimuthDisplay = ScopeControlMediator.Instance.ScopeControlPlugin.AzimuthDisplay;
+
+            customPosition = new DataPoint(1000, 1000);
+            customPath = null;
+
+            messageBroker.Subscribe($"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPath", this);
+            messageBroker.Subscribe($"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPosition", this);
         }
 
         private void ScopeControlPlugin_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
@@ -127,10 +135,16 @@ namespace ScopeControl {
         private List<HorizonPoint> horizon;
 
         [ObservableProperty]
+        private List<DataPoint> customPath;
+
+        [ObservableProperty]
         private List<DataPoint> telescopePath;
 
         [ObservableProperty]
         private DataPoint telescopePosition;
+
+        [ObservableProperty]
+        private DataPoint? customPosition;
 
         [ObservableProperty]
         private DataPoint moonPosition;
@@ -272,6 +286,24 @@ namespace ScopeControl {
                     }
                 } catch { }
             } 
+        }
+
+        public async Task OnMessageReceived(IMessage message) {
+            if(message.Topic == $"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPath") {
+                if (message.Content is null) {
+                    CustomPath = new();
+                }
+                if (message.Content is List<DataPoint> dataPoints) {
+                    CustomPath = dataPoints;
+                }
+            } else if(message.Topic == $"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPosition") {
+                if(message.Content is null) {
+                    CustomPosition = new DataPoint(1000, 1000);
+                }
+                if(message.Content is DataPoint point) {
+                    CustomPosition = point;
+                }
+            }
         }
     }
 

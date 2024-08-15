@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
@@ -14,7 +14,7 @@
     <Reference Include="System.Windows" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NINA.Plugin" Version="3.0.0.1015-nightly" />
+    <PackageReference Include="NINA.Plugin" Version="3.1.0.9001" />
   </ItemGroup>
   <Target Name="PostBuildMacros">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">

@@ -634,6 +634,14 @@
                     <oxy:LineSeries
                         DataFieldX="X"
                         DataFieldY="Y"
+                        ItemsSource="{Binding CustomPath}"
+                        TrackerKey="AltAzTracker"
+                        XAxisKey="AltitudeAxis"
+                        YAxisKey="AzimuthAxis"
+                        Color="{Binding Path=Color, Source={StaticResource SecondaryBrush}}" />
+                    <oxy:LineSeries
+                        DataFieldX="X"
+                        DataFieldY="Y"
                         ItemsSource="{Binding Moon}"
                         TrackerKey="AltAzTracker"
                         Visibility="{Binding ShowMoon, Converter={StaticResource BooleanToVisibilityCollapsedConverter}}"
@@ -679,6 +687,16 @@
                         X="{Binding TelescopePosition.X}"
                         XAxisKey="AltitudeAxis"
                         Y="{Binding TelescopePosition.Y}"
+                        YAxisKey="AzimuthAxis" />
+                    <oxy:PointAnnotation
+                        Fill="Transparent"
+                        Shape="Circle"
+                        Size="5"
+                        Stroke="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
+                        StrokeThickness="2"
+                        X="{Binding CustomPosition.X}"
+                        XAxisKey="AltitudeAxis"
+                        Y="{Binding CustomPosition.Y}"
                         YAxisKey="AzimuthAxis" />
                     <oxy:PointAnnotation
                         Fill="{Binding Path=Color, Source={StaticResource PrimaryBrush}}"
