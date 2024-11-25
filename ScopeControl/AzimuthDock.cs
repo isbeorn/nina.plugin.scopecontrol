@@ -21,7 +21,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace ScopeControl {
@@ -78,7 +77,7 @@ namespace ScopeControl {
 
             customPosition = new DataPoint(1000, 1000);
             customPath = null;
-
+            
             messageBroker.Subscribe($"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPath", this);
             messageBroker.Subscribe($"{nameof(ScopeControl)}_{nameof(AzimuthDock)}_CustomPosition", this);
         }
