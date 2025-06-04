@@ -66,7 +66,7 @@ namespace ScopeControl {
                 TelescopeInfo = deviceInfo;
                 if(TelescopeInfo.Connected && TelescopeInfo.TrackingEnabled && NighttimeData != null) {
                     var showMoon = Target != null ? Target.Moon.DisplayMoon : false;
-                    if(Target == null || (Target?.Coordinates - deviceInfo.Coordinates)?.Distance.Degree > 1) { 
+                    if(Target == null || (Target?.Coordinates - deviceInfo.Coordinates)?.Distance.Degree > 0.01) { 
                         Target = new DeepSkyObject("", deviceInfo.Coordinates, "", profileService.ActiveProfile.AstrometrySettings.Horizon);
                         Target.SetDateAndPosition(NighttimeCalculator.GetReferenceDate(DateTime.Now), profileService.ActiveProfile.AstrometrySettings.Latitude, profileService.ActiveProfile.AstrometrySettings.Longitude);
                         if(showMoon) {

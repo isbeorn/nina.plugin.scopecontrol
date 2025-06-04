@@ -244,7 +244,7 @@ namespace ScopeControl {
                 try {
                     if (deviceInfo.Connected) {
                         if (deviceInfo.TrackingEnabled && deviceInfo.TrackingRate.TrackingMode == TrackingMode.Sidereal) {
-                            if (currentTelescopeCoordinates == null || (currentTelescopeCoordinates - deviceInfo.Coordinates).Distance.Degree > 1) {
+                            if (currentTelescopeCoordinates == null || (currentTelescopeCoordinates - deviceInfo.Coordinates).Distance.Degree > 0.01) {
                                 currentTelescopeCoordinates = deviceInfo.Coordinates;
                                 var path = new List<DataPoint>();
 
